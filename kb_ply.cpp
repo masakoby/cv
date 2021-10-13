@@ -4,7 +4,6 @@
 #include <sstream>
 
 #include "kb_ply.h"
-#include "kb_mat.h"
 
 
 int kb::save_pt3d_as_ply(
