@@ -37,7 +37,9 @@ namespace kb
 
 			for (int k = 0; k < 6; k++) {
 				double matR[9];
-				kb::make_cube_1face(cube_pt[k], matR, cube_idx[k], 2.0, k);
+				//kb::make_cube_1face(cube_pt[k], matR, cube_idx[k], 2.0, k);
+				kb::make_cube_1face_v2(cube_pt[k], matR, cube_idx[k], 2.0, k);
+				
 				kb::matmul_3x3_3x3(matXZ, matR, cube_matR[k]);
 			}
 		}
