@@ -114,7 +114,7 @@ int kb::deleteTheSamePosition(
 	}
 
 	//	box管理オブジェクト
-	kb::Box3 box(1.0);
+	kb::Box3 box(lenBox);
 	box.create(p3d);
 
 	//	同じ座標を持つものを探す
