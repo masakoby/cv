@@ -51,6 +51,20 @@ namespace kb
 		std::vector<std::vector<int>>& seq_vertex,
 		std::vector<int>& seq_label
 	);
+	int load_edge_as_ply(
+		std::string& path,
+		std::vector<double>& vec_pos,
+		std::vector<int >& vec_label,
+		std::vector<int >& vec_attribute,
+		std::vector<double>& vec_radius,
+		std::vector<double>& vec_curvature,
+		std::vector<double>& vec_torsion,
+
+		std::vector<int>& vec_edge_idx,
+		std::vector<int>& vec_edge_label,
+		std::vector<std::vector<int>>& seq_vertex,
+		std::vector<int>& seq_label
+	);
 
 
 

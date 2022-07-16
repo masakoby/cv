@@ -331,6 +331,174 @@ int kb::load_edge_as_ply_v6(
 	return 0;
 }
 
+int kb::load_edge_as_ply(
+	std::string& path,
+	std::vector<double>& vec_pos,
+	std::vector<int >& vec_label,
+	std::vector<int >& vec_attribute,
+	std::vector<double>& vec_radius,
+	std::vector<double>& vec_curvature,
+	std::vector<double>& vec_torsion,
+
+	std::vector<int>& vec_edge_idx,
+	std::vector<int>& vec_edge_label,
+	std::vector<std::vector<int>>& seq_vertex,
+	std::vector<int>& seq_label
+)
+{
+	std::vector<std::vector<std::string>> vv;
+	if (kb::load_csv(path, vv, ' ') < 0)
+		return -1;
+
+	int num_vv = vv.size();
+
+	int num_vertex = -1;// vec_pos.size() / 3;
+	int num_edge = -1;// vec_idx.size() / 3;
+	int num_seq = -1;
+	int start = 0;
+	int area = 0;
+	int area_index = 0;
+	int lut_item[8] = { -1,-1,-1,-1,-1,-1,-1,-1 };
+
+	//	load header 
+	for (int k = 0; k < num_vv; k++) {
+		int num_word = vv[k].size();
+		if (num_word == 0) {
+			continue;
+		}
+		//	header end
+		if (vv[k][0].find("end_header") != std::string::npos) {
+			start = k + 1;
+			break;
+		}
+
+		if (num_word < 3) {
+			continue;
+		}
+		std::cout << vv[k][0] << " " << vv[k][1] << " " << vv[k][2] << std::endl;
+
+		if (vv[k][0] == "element" && vv[k][1] == "vertex") {
+			num_vertex = std::stoi(vv[k][2]);
+			area = 1;
+			area_index = 0;
+		}
+		else if (vv[k][0] == "element" && vv[k][1] == "edge") {
+			num_edge = std::stoi(vv[k][2]);
+			area = 2;
+			area_index = 0;
+		}
+		else if (vv[k][0] == "element" && vv[k][1] == "vertex_seq") {
+			num_seq = std::stoi(vv[k][2]);
+			area = 3;
+			area_index = 0;
+		}
+		if (area == 1) {
+			if (vv[k][0] == "property" && vv[k][1] == "float" && vv[k][2] == "x") {
+				lut_item[0] = area_index;
+				area_index++;
+			}
+			else if (vv[k][0] == "property" && vv[k][1] == "float" && vv[k][2] == "y") {
+				lut_item[1] = area_index;
+				area_index++;
+			}
+			else if (vv[k][0] == "property" && vv[k][1] == "float" && vv[k][2] == "z") {
+				lut_item[2] = area_index;
+				area_index++;
+			}
+			else if (vv[k][0] == "property" && vv[k][1] == "int" && vv[k][2] == "label") {
+				lut_item[3] = area_index;
+				area_index++;
+			}
+			else if (vv[k][0] == "property" && vv[k][1] == "int" && vv[k][2] == "attribute") {
+				lut_item[4] = area_index;
+				area_index++;
+			}
+			else if (vv[k][0] == "property" && vv[k][1] == "float" && vv[k][2] == "radius") {
+				lut_item[5] = area_index;
+				area_index++;
+			}
+			else if (vv[k][0] == "property" && vv[k][1] == "float" && vv[k][2] == "curvature") {
+				lut_item[6] = area_index;
+				area_index++;
+			}
+			else if (vv[k][0] == "property" && vv[k][1] == "float" && vv[k][2] == "torsion") {
+				lut_item[7] = area_index;
+				area_index++;
+			}
+		}
+	}
+
+
+	std::cout << "number of vertices=" << num_vertex << std::endl;
+	std::cout << "number of edges=" << num_edge << std::endl;
+	std::cout << "number of lines=" << num_seq << std::endl;
+	if (num_vertex < 0 || num_edge < 0)
+		return -1;
+
+	vec_pos.resize(num_vertex * 3);
+	vec_label.resize(num_vertex, 0);
+	vec_attribute.resize(num_vertex, 0);
+	vec_radius.resize(num_vertex, 0);
+	vec_curvature.resize(num_vertex, 0);
+	vec_torsion.resize(num_vertex, 0);
+
+	vec_edge_idx.resize(num_edge * 2);
+	vec_edge_label.resize(num_edge);
+	seq_vertex.resize(num_seq);
+	seq_label.resize(num_seq);
+
+	int flag_property = 1;
+	for (int i = 0; i < 8; i++) {
+		if (lut_item[i] == i) {
+		}
+		else {
+			flag_property = -1;
+		}
+	}
+
+	for (int k = 0; k < num_vertex; k++) {
+		vec_pos[k * 3 + 0] = std::stod(vv[k + start][0]);
+		vec_pos[k * 3 + 1] = std::stod(vv[k + start][1]);
+		vec_pos[k * 3 + 2] = std::stod(vv[k + start][2]);
+
+		int num_word = vv[k + start].size();
+		if (num_word < 8)
+			continue;
+
+		if (flag_property > 0) {
+			vec_label[k] = std::stoi(vv[k + start][3]);
+			vec_attribute[k] = std::stoi(vv[k + start][4]);
+			vec_radius[k] = std::stod(vv[k + start][5]);
+			vec_curvature[k] = std::stod(vv[k + start][6]);
+			vec_torsion[k] = std::stod(vv[k + start][7]);
+		}
+	}
+	start = start + num_vertex;
+
+	for (int k = 0; k < num_edge; k++) {
+		vec_edge_idx[k * 2 + 0] = std::stoi(vv[k + start][0]);
+		vec_edge_idx[k * 2 + 1] = std::stoi(vv[k + start][1]);
+		vec_edge_label[k] = std::stoi(vv[k + start][2]);
+	}
+	start = start + num_edge;
+
+	for (int k = 0; k < num_seq; k++) {
+		seq_label[k] = std::stoi(vv[k + start][0]);
+		int num1 = std::stoi(vv[k + start][1]);
+
+		std::vector<int> vv1;
+		for (int i = 0; i < num1; i++) {
+			vv1.push_back(std::stoi(vv[k + start][i + 2]));
+		}
+		seq_vertex[k] = vv1;
+	}
+
+
+
+	return 0;
+}
+
+
 
 int kb::load_edge_as_ply_v5(
 	std::string& path,

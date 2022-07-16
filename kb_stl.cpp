@@ -3,6 +3,7 @@
 
 #include "kb_stl.h"
 #include "kb_mat.h"
+#include "kb_normal_vector_on_mesh.h"
 
 
 int kb::loadAsSTL_ascii(
@@ -218,6 +219,10 @@ int kb::saveAsSTL(
 	std::vector< int >& indexElements
 )
 {
+	std::vector< float  > vnv_f, vnv;
+	kb::normal_vector_on_mesh(vpos, indexElements, vnv, vnv_f);
+
+
 	int numP = vpos.size()/3;
 	int numElements = indexElements.size() / 3;
 
@@ -227,9 +232,9 @@ int kb::saveAsSTL(
 	for (size_t k = 0; k < numElements; k++) {
 
 		int idx[3] = {
-			indexElements[k * 3+0]*3,
-			indexElements[k * 3 + 1]*3,
-			indexElements[k * 3 + 2]*3
+			indexElements[k * 3 + 0] * 3,
+			indexElements[k * 3 + 1] * 3,
+			indexElements[k * 3 + 2] * 3
 		};
 
 		double v1[9] = {
@@ -237,16 +242,12 @@ int kb::saveAsSTL(
 			vpos[idx[1] + 0], vpos[idx[1] + 1], vpos[idx[1] + 2],
 			vpos[idx[2] + 0], vpos[idx[2] + 1], vpos[idx[2] + 2]
 		};
-		double dv1[3], dv2[3];
-		dv1[0] = v1[3] - v1[0];
-		dv1[1] = v1[4] - v1[1];
-		dv1[2] = v1[5] - v1[2];
-		dv2[0] = v1[6] - v1[0];
-		dv2[1] = v1[7] - v1[1];
-		dv2[2] = v1[8] - v1[2];
 
-		double nv[3];
-		kb::crossproduct(dv1, dv2, nv);
+		double nv[3] = {
+			vnv[idx[0] + 0],
+			vnv[idx[0] + 1],
+			vnv[idx[0] + 2]
+		};
 
 
 		char strV1[512];
