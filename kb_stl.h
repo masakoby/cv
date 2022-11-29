@@ -35,6 +35,12 @@ namespace kb
 		std::vector< float >& vpos,
 		std::vector< int >& indexElements
 	);
+	int saveAsSTL(
+		const std::string& path1,
+		std::vector< float >& vpos,
+		std::vector< int >& indexElements,
+		std::vector< unsigned char >& vvalid
+	);
 
 
 	int saveAsObj(

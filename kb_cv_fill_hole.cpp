@@ -21,6 +21,7 @@ int kb::fill_hole(
 
 	std::vector<unsigned char> lut;
 	int lnum = squares.size();
+	int lnum_fillhole = 0;
 	lut.resize(lnum + 1, 0);
 	lut[0] = 255;
 	for (int i = 1; i <= lnum; i++) {
@@ -32,6 +33,7 @@ int kb::fill_hole(
 
 		if (squares[i - 1] <= square_hole || square_hole < 0) {
 			lut[i] = 255;
+			lnum_fillhole++;
 		}
 	}
 
@@ -46,5 +48,5 @@ int kb::fill_hole(
 		}
 	}
 
-	return 0;
+	return lnum_fillhole;
 }

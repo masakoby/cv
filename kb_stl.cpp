@@ -270,6 +270,111 @@ int kb::saveAsSTL(
 	return 0;
 }
 
+int kb::saveAsSTL(
+	const std::string& path1,
+	std::vector< float >& vpos,
+	std::vector< int >& indexElements,
+	std::vector< unsigned char >& vvalid
+)
+{
+	int num_valid=vvalid.size();
+
+	std::vector< float  > vnv_f, vnv;
+	kb::normal_vector_on_mesh(vpos, indexElements, vnv, vnv_f);
+
+
+	int numP = vpos.size() / 3;
+	int numElements = indexElements.size() / 3;
+
+
+	std::ofstream ofs(path1);
+	ofs << "solid kb\n";
+
+	if (num_valid == numElements) {
+		for (size_t k = 0; k < numElements; k++) {
+			if (vvalid[k] == 0)
+				continue;
+
+			int idx[3] = {
+				indexElements[k * 3 + 0] * 3,
+				indexElements[k * 3 + 1] * 3,
+				indexElements[k * 3 + 2] * 3
+			};
+
+			double v1[9] = {
+				vpos[idx[0] + 0], vpos[idx[0] + 1], vpos[idx[0] + 2],
+				vpos[idx[1] + 0], vpos[idx[1] + 1], vpos[idx[1] + 2],
+				vpos[idx[2] + 0], vpos[idx[2] + 1], vpos[idx[2] + 2]
+			};
+
+			double nv[3] = {
+				vnv[idx[0] + 0],
+				vnv[idx[0] + 1],
+				vnv[idx[0] + 2]
+			};
+
+
+			char strV1[512];
+			int nn = 512;
+			{
+				sprintf_s(strV1, nn, "facet normal %.06f %.06f %.06f\n", nv[0], nv[1], nv[2]);	ofs << strV1;
+				ofs << "outer loop\n";
+				sprintf_s(strV1, nn, "vertex %.06f %.06f %.06f\n", v1[0], v1[1], v1[2]);		ofs << strV1;
+				sprintf_s(strV1, nn, "vertex %.06f %.06f %.06f\n", v1[3], v1[4], v1[5]);		ofs << strV1;
+				sprintf_s(strV1, nn, "vertex %.06f %.06f %.06f\n", v1[6], v1[7], v1[8]);		ofs << strV1;
+				ofs << "endloop\n";
+				ofs << "endfacet\n";
+			}
+
+		}
+
+	}
+	else {
+
+		for (size_t k = 0; k < numElements; k++) {
+
+			int idx[3] = {
+				indexElements[k * 3 + 0] * 3,
+				indexElements[k * 3 + 1] * 3,
+				indexElements[k * 3 + 2] * 3
+			};
+
+			double v1[9] = {
+				vpos[idx[0] + 0], vpos[idx[0] + 1], vpos[idx[0] + 2],
+				vpos[idx[1] + 0], vpos[idx[1] + 1], vpos[idx[1] + 2],
+				vpos[idx[2] + 0], vpos[idx[2] + 1], vpos[idx[2] + 2]
+			};
+
+			double nv[3] = {
+				vnv[idx[0] + 0],
+				vnv[idx[0] + 1],
+				vnv[idx[0] + 2]
+			};
+
+
+			char strV1[512];
+			int nn = 512;
+			{
+				sprintf_s(strV1, nn, "facet normal %.06f %.06f %.06f\n", nv[0], nv[1], nv[2]);	ofs << strV1;
+				ofs << "outer loop\n";
+				sprintf_s(strV1, nn, "vertex %.06f %.06f %.06f\n", v1[0], v1[1], v1[2]);		ofs << strV1;
+				sprintf_s(strV1, nn, "vertex %.06f %.06f %.06f\n", v1[3], v1[4], v1[5]);		ofs << strV1;
+				sprintf_s(strV1, nn, "vertex %.06f %.06f %.06f\n", v1[6], v1[7], v1[8]);		ofs << strV1;
+				ofs << "endloop\n";
+				ofs << "endfacet\n";
+			}
+
+		}
+	}
+	ofs << "endsolid\n";
+	ofs.close();
+
+
+	return 0;
+}
+
+
+
 
 int kb::saveAsPly(
 		const std::string& path1, 

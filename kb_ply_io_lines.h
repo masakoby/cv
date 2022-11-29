@@ -51,12 +51,54 @@ namespace kb
 		std::vector<std::vector<int>>& seq_vertex,
 		std::vector<int>& seq_label
 	);
+	int save_edge_as_ply_v8(
+		std::string& path,
+		std::vector<double>& vec_pos,
+		std::vector<int>& vec_vertex_label,
+		std::vector<int>& vec_attribute,
+		std::vector<double>& vec_radius,
+		std::vector<double>& vec_ratio,
+		std::vector<double>& vec_area,
+		std::vector<int>& vec_edge_idx,
+		std::vector<int>& vec_edge_label,
+		std::vector<std::vector<int>>& seq_vertex,
+		std::vector<int>& seq_label
+	);
+	int save_edge_as_ply_v8(
+		std::string& path,
+		std::vector<float>& vec_pos,
+		std::vector<int>& vec_vertex_label,
+		std::vector<int>& vec_attribute,
+		std::vector<float>& vec_radius,
+		std::vector<double>& vec_ratio,
+		std::vector<float>& vec_area,
+		std::vector<int>& vec_edge_idx,
+		std::vector<int>& vec_edge_label,
+		std::vector<std::vector<int>>& seq_vertex,
+		std::vector<int>& seq_label
+	);
 	int load_edge_as_ply(
 		std::string& path,
 		std::vector<double>& vec_pos,
 		std::vector<int >& vec_label,
 		std::vector<int >& vec_attribute,
 		std::vector<double>& vec_radius,
+		std::vector<double>& vec_curvature,
+		std::vector<double>& vec_torsion,
+
+		std::vector<int>& vec_edge_idx,
+		std::vector<int>& vec_edge_label,
+		std::vector<std::vector<int>>& seq_vertex,
+		std::vector<int>& seq_label
+	);
+	int load_edge_as_ply(
+		std::string& path,
+		std::vector<double>& vec_pos,
+		std::vector<int >& vec_label,
+		std::vector<int >& vec_attribute,
+		std::vector<double>& vec_radius,
+		std::vector<double>& vec_ratio,
+		std::vector<double>& vec_area,
 		std::vector<double>& vec_curvature,
 		std::vector<double>& vec_torsion,
 

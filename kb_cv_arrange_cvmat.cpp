@@ -20,6 +20,27 @@ void kb::arrange_mat2(cv::Mat& mat1, cv::Mat& mat2, cv::Mat& matV)
 }
 
 
+void kb::arrange_matN_subset(std::vector<cv::Mat>& vec_mat, cv::Mat& matV, int num_width, int start_idx, int num_mat)
+{
+	int num = vec_mat.size();
+	if (num <= 0 || start_idx<0 || num<=start_idx)
+		return;
+
+	int num_end = start_idx + num_mat;
+	if (num < num_end) {
+		num_end = num;
+	}
+
+	std::vector<cv::Mat> vec_mat2;
+	vec_mat2.resize(num_mat);
+	for (int k = 0; k < num_mat; k++) {
+		if ((start_idx+k) >= num)
+			break;
+		vec_mat2[k] = vec_mat[start_idx + k];
+	}
+	kb::arrange_matN(vec_mat2, matV, num_width);
+
+}
 
 void kb::arrange_matN(std::vector<cv::Mat>& vec_mat, cv::Mat& matV, int num_width)
 {
